@@ -3,6 +3,7 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
+  IsStrongPassword,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -26,4 +27,18 @@ export class CreateUserDto {
   @IsEmail({}, { message: 'The email is not valid.' })
   @IsNotEmpty({ message: 'The email cannot be empty.' })
   email: string;
+
+  @ApiProperty({
+    description: 'Password',
+    example: '123.Abcd',
+  })
+  @IsStrongPassword({
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  })
+  @MaxLength(25, { message: 'The password cannot exceed 25 characters' })
+  password: string;
 }

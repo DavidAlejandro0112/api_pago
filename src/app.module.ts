@@ -7,6 +7,7 @@ import { Payment } from './common/entities/payment.entity';
 import { Card } from './common/entities/card.entity';
 import { CardModule } from './modules/card/card.module';
 import { PaymentModule } from './modules/payment/payment.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PaymentModule } from './modules/payment/payment.module';
       entities: [User, Payment, Card],
       synchronize: true,
     }),
+    AuthModule,
     UserModule,
     CardModule,
     PaymentModule,

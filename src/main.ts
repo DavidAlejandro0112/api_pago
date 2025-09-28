@@ -19,8 +19,8 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('crud-user')
-    .setDescription('crud-user')
+    .setTitle('Api pagos')
+    .setDescription('API para la gestión de pagos con usuarios y tarjetas.')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

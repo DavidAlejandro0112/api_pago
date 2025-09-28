@@ -8,6 +8,7 @@ import {
   HttpCode,
   NotFoundException,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,12 +18,15 @@ import {
   ApiParam,
   ApiExtraModels,
   getSchemaPath,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '../../common/entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Users')
+@ApiBearerAuth()
 @ApiExtraModels(User)
 @Controller('users')
 export class UserController {
@@ -59,7 +63,7 @@ export class UserController {
       throw new BadRequestException('Error al crear el usuario.');
     }
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener un usuario por ID',
@@ -90,6 +94,7 @@ export class UserController {
     }
     return user;
   }
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los usuarios',

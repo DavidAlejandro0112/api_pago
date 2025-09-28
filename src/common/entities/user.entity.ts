@@ -13,6 +13,13 @@ export class User {
   @Column({ length: 100, unique: true })
   email: string;
 
+  @Column({
+    nullable: false,
+    type: 'varchar',
+    length: 255,
+  })
+  password: string;
+
   @OneToMany(() => Card, (card) => card.user)
   cards: Card[];
 

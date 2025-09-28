@@ -8,6 +8,7 @@ import {
   HttpStatus,
   NotFoundException,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,13 +18,18 @@ import {
   ApiExtraModels,
   getSchemaPath,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/card.dto';
 import { Card } from '../../common/entities/card.entity';
+// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Cards')
+@ApiBearerAuth()
 @ApiExtraModels(Card)
+@UseGuards(AuthGuard('jwt'))
 @Controller('cards')
 export class CardController {
   constructor(private readonly cardService: CardService) {}

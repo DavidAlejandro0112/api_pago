@@ -4,26 +4,27 @@ import {
   Get,
   Body,
   Param,
-  UsePipes,
-  ValidationPipe,
-  ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
-  ApiResponse,
-  ApiBadRequestResponse,
-  ApiNotFoundResponse,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiBearerAuth,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/createpayment.dto';
 import { Payment } from '../../common/entities/payment.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Payments')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
+@ApiExtraModels(Payment)
 @Controller('payments')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
