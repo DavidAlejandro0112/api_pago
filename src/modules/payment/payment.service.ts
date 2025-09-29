@@ -26,7 +26,12 @@ export class PaymentService {
     private httpService: HttpService
   ) {}
 
-  async create(dto: CreatePaymentDto): Promise<Payment> {
+  async create(dto: CreatePaymentDto): Promise<{
+    id: string;
+    amount: number;
+    approved: boolean;
+    createdAt: Date;
+  }> {
     const user = await this.userRepo.findOneBy({ id: dto.userId });
     const card = await this.cardRepo.findOneBy({ id: dto.cardId });
     if (!user) throw new NotFoundException('Usuario no encontrado');
@@ -53,7 +58,13 @@ export class PaymentService {
       card,
     });
 
-    return this.paymentRepo.save(payment);
+    const savedPayment = await this.paymentRepo.save(payment);
+    return {
+      id: savedPayment.id,
+      amount: savedPayment.amount,
+      approved: savedPayment.approved,
+      createdAt: savedPayment.createdAt,
+    };
   }
 
   async getHistoryByUser(

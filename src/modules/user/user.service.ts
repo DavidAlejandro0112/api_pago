@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../common/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PaginationDTO } from '../../common/dto/pagination.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Injectable()
 export class UserService {
@@ -17,7 +18,7 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const { email } = createUserDto;
 
     try {
@@ -29,7 +30,9 @@ export class UserService {
       }
 
       const user = this.userRepository.create(createUserDto);
-      return await this.userRepository.save(user);
+      const savedUser = await this.userRepository.save(user);
+
+      return this.mapToUserResponseDto(savedUser);
     } catch (error) {
       if (
         error instanceof ConflictException ||
@@ -44,26 +47,20 @@ export class UserService {
     }
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string): Promise<UserResponseDto> {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException(`Usuario con ID "${id}" no encontrado.`);
     }
-    return user;
+    return this.mapToUserResponseDto(user);
   }
 
-  async findOneByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email });
-    if (!user) {
-      throw new NotFoundException(
-        `Usuario con email "${email}" no encontrado.`
-      );
-    }
-    return user;
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ email });
   }
 
   async findAll(pagination: PaginationDTO): Promise<{
-    data: User[];
+    data: UserResponseDto[];
     totalItems: number;
     currentPage: number;
     itemsPerPage: number;
@@ -84,7 +81,7 @@ export class UserService {
       const totalPages = Math.ceil(totalItems / safeLimit);
 
       return {
-        data,
+        data: data.map((user) => this.mapToUserResponseDto(user)),
         totalItems,
         currentPage: safePage,
         itemsPerPage: safeLimit,
@@ -96,5 +93,12 @@ export class UserService {
         'No se pudieron recuperar los usuarios. Inténtelo más tarde.'
       );
     }
+  }
+  private mapToUserResponseDto(user: User): UserResponseDto {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
   }
 }

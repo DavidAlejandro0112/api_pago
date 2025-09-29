@@ -10,8 +10,6 @@ import {
   NotFoundException,
   BadRequestException,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -28,7 +26,8 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '../../common/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { PaginationDTO } from '../../common/dto/pagination.dto'; // 👈 Importa tu DTO
+import { PaginationDTO } from '../../common/dto/pagination.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -58,7 +57,7 @@ export class UserController {
     description:
       'Solicitud inválida: email duplicado, campos faltantes o formato incorrecto.',
   })
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     try {
       return await this.userService.create(createUserDto);
     } catch (error) {
@@ -93,7 +92,7 @@ export class UserController {
     status: HttpStatus.NOT_FOUND,
     description: 'Usuario no encontrado con el ID proporcionado.',
   })
-  async findOne(@Param('id') id: string): Promise<User> {
+  async findOne(@Param('id') id: string): Promise<UserResponseDto> {
     const user = await this.userService.findOne(id);
     if (!user) {
       throw new NotFoundException(`Usuario con ID "${id}" no encontrado.`);
@@ -112,18 +111,16 @@ export class UserController {
     name: 'page',
     required: false,
     type: Number,
-    description: 'Número de página (por defecto: 1)',
     example: 1,
   })
   @ApiQuery({
     name: 'limit',
     required: false,
     type: Number,
-    description: 'Cantidad de ítems por página (por defecto: 10, máximo: 100)',
     example: 10,
   })
   async findAll(@Query() pagination: PaginationDTO): Promise<{
-    data: User[];
+    data: UserResponseDto[];
     totalItems: number;
     currentPage: number;
     itemsPerPage: number;

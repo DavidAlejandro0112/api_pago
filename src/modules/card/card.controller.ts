@@ -10,6 +10,7 @@ import {
   BadRequestException,
   UseGuards,
   Query,
+  ConflictException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,13 +19,13 @@ import {
   ApiParam,
   ApiExtraModels,
   getSchemaPath,
-  ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/card.dto';
 import { Card } from '../../common/entities/card.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { CardResponseDto } from './dto/card-response.dto';
 
 @ApiTags('Cards')
 @ApiBearerAuth()
@@ -42,19 +43,17 @@ export class CardController {
       $ref: getSchemaPath(Card),
     },
   })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-  })
-  async create(@Body() createCardDto: CreateCardDto): Promise<Card> {
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND })
+  @ApiResponse({ status: HttpStatus.CONFLICT })
+  async create(@Body() createCardDto: CreateCardDto): Promise<CardResponseDto> {
     try {
       return await this.cardService.create(createCardDto);
     } catch (error) {
       if (
         error instanceof NotFoundException ||
-        error instanceof BadRequestException
+        error instanceof BadRequestException ||
+        error instanceof ConflictException
       ) {
         throw error;
       }
@@ -77,7 +76,6 @@ export class CardController {
     name: 'id',
     required: true,
     type: String,
-    example: 'a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -88,7 +86,7 @@ export class CardController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
   })
-  async findOne(@Param('id') id: string): Promise<Card> {
+  async findOne(@Param('id') id: string): Promise<CardResponseDto> {
     const card = await this.cardService.findOne(id);
     if (!card) {
       throw new NotFoundException(`Tarjeta con ID "${id}" no encontrada.`);
@@ -113,9 +111,10 @@ export class CardController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
   })
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id') id: string): Promise<{ message: string }> {
     try {
       await this.cardService.remove(id);
+      return { message: 'Tarjeta eliminada correctamente' };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

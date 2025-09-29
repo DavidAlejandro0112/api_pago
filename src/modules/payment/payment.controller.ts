@@ -38,7 +38,12 @@ export class PaymentController {
   @ApiCreatedResponse({
     type: Payment,
   })
-  async create(@Body() createPaymentDto: CreatePaymentDto): Promise<Payment> {
+  async create(@Body() createPaymentDto: CreatePaymentDto): Promise<{
+    id: string;
+    amount: number;
+    approved: boolean;
+    createdAt: Date;
+  }> {
     return this.paymentService.create(createPaymentDto);
   }
 

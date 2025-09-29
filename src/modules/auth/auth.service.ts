@@ -13,7 +13,7 @@ export class AuthService {
   ) {}
 
   async register(dto: CreateUserDto) {
-    const existing = await this.userService.findOneByEmail(dto.email);
+    const existing = await this.userService.findByEmail(dto.email);
     if (existing) throw new Error('Email ya registrado');
 
     const hashed = await bcrypt.hash(dto.password, 10);
@@ -21,7 +21,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string) {
-    const user = await this.userService.findOneByEmail(email);
+    const user = await this.userService.findByEmail(email);
     if (!user) return null;
     const valid = await bcrypt.compare(password, user.password);
     return valid ? user : null;

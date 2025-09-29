@@ -13,7 +13,7 @@ export class Card {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 16 })
+  @Column({ length: 16, unique: true })
   number: string;
 
   @Column({ length: 100 })

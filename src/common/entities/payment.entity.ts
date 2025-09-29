@@ -7,7 +7,7 @@ export class Payment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column()
   amount: number;
 
   @Column({ default: false })
