@@ -9,6 +9,7 @@ import {
   NotFoundException,
   BadRequestException,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -23,7 +24,6 @@ import {
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/card.dto';
 import { Card } from '../../common/entities/card.entity';
-// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Cards')
@@ -36,9 +36,6 @@ export class CardController {
 
   @Post()
   @ApiOperation({})
-  @ApiBody({
-    type: CreateCardDto,
-  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     schema: {
@@ -63,6 +60,13 @@ export class CardController {
       }
       throw new BadRequestException('Error interno al crear la tarjeta.');
     }
+  }
+  @Get()
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ) {
+    return this.cardService.findAll(page, limit);
   }
 
   @Get(':id')

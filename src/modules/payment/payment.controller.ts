@@ -7,6 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,11 +16,13 @@ import {
   ApiOkResponse,
   ApiBearerAuth,
   ApiExtraModels,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/createpayment.dto';
 import { Payment } from '../../common/entities/payment.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
 
 @ApiTags('Payments')
 @ApiBearerAuth()
@@ -45,10 +48,24 @@ export class PaymentController {
     description: 'Lista de pagos del usuario.',
     type: [Payment],
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Número de página (por defecto: 1)',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Cantidad de pagos por página (por defecto: 10, máximo: 100)',
+    example: 10,
+  })
   async getHistoryByUser(
-    @Param('userId')
-    userId: string
-  ): Promise<Payment[]> {
-    return this.paymentService.getHistoryByUser(userId);
+    @Param('userId') userId: string,
+    @Query() pagination: PaginationDTO
+  ) {
+    return this.paymentService.getHistoryByUser(userId, pagination);
   }
 }

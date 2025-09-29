@@ -4,11 +4,14 @@ import {
   Body,
   Get,
   Param,
+  Query,
   HttpStatus,
   HttpCode,
   NotFoundException,
   BadRequestException,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,15 +22,17 @@ import {
   ApiExtraModels,
   getSchemaPath,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '../../common/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { PaginationDTO } from '../../common/dto/pagination.dto'; // 👈 Importa tu DTO
 
 @ApiTags('Users')
 @ApiBearerAuth()
-@ApiExtraModels(User)
+@ApiExtraModels(User, PaginationDTO)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -63,6 +68,7 @@ export class UserController {
       throw new BadRequestException('Error al crear el usuario.');
     }
   }
+
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOperation({
@@ -94,21 +100,35 @@ export class UserController {
     }
     return user;
   }
+
   @UseGuards(AuthGuard('jwt'))
   @Get()
   @ApiOperation({
-    summary: 'Obtener todos los usuarios',
-    description: 'Devuelve una lista de todos los usuarios registrados.',
+    summary: 'Obtener todos los usuarios con paginación',
+    description:
+      'Devuelve una lista paginada de todos los usuarios registrados.',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Lista de usuarios obtenida exitosamente.',
-    schema: {
-      type: 'array',
-      items: { $ref: getSchemaPath(User) },
-    },
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Número de página (por defecto: 1)',
+    example: 1,
   })
-  async findAll(): Promise<User[]> {
-    return await this.userService.findAll();
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Cantidad de ítems por página (por defecto: 10, máximo: 100)',
+    example: 10,
+  })
+  async findAll(@Query() pagination: PaginationDTO): Promise<{
+    data: User[];
+    totalItems: number;
+    currentPage: number;
+    itemsPerPage: number;
+    totalPages: number;
+  }> {
+    return await this.userService.findAll(pagination);
   }
 }

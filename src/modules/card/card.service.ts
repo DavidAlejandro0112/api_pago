@@ -33,8 +33,33 @@ export class CardService {
     return this.cardRepository.save(card);
   }
 
-  async findAll(): Promise<Card[]> {
-    return this.cardRepository.find({ relations: ['user'] });
+  async findAll(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{
+    data: Card[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    page = Math.max(1, page);
+    limit = Math.max(1, Math.min(limit, 100));
+
+    const [data, total] = await this.cardRepository.findAndCount({
+      relations: ['user'],
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages,
+    };
   }
 
   async findOne(id: string): Promise<Card> {
