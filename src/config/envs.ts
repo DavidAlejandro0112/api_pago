@@ -10,6 +10,8 @@ interface EnvVars {
   DB_NAME: string;
   DB_HOST: string;
   JWT_SECRET: string;
+  JWT_EXPIRES_IN?: string;
+  payment_service_url?: string;
 }
 const envSchema = joi
   .object({
@@ -21,6 +23,8 @@ const envSchema = joi
     DB_NAME: joi.string().required(),
     DB_HOST: joi.string().required(),
     JWT_SECRET: joi.string().required(),
+    JWT_EXPIRES_IN: joi.string().optional(),
+    PAYMENT_SERVICE_UR: joi.string().uri().optional(),
   })
   .unknown(true);
 
@@ -41,5 +45,7 @@ export const envs = {
     name: envVars.DB_NAME,
     host: envVars.DB_HOST,
     jwt_secret: envVars.JWT_SECRET,
+    jwt_expires_in: process.env.JWT_EXPIRES_IN,
+    payment_service_url: envVars.payment_service_url,
   },
 };

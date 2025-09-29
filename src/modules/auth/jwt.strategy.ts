@@ -10,7 +10,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: envs.db.jwt_secret || 'pagos-secret-key',
+      secretOrKey: envs.db.jwt_secret,
     });
   }
 

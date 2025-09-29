@@ -1,98 +1,182 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Sistema de Pagos – Prueba Técnica Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![NestJS](https://nestjs.com/img/logo-small.svg)
+API RESTful desarrollada en **NestJS (Node.js + TypeScript)** para gestionar un sistema básico de pagos, con autenticación JWT, base de datos **PostgreSQL** y un microservicio de procesamiento de pagos en **Python (FastAPI)**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📌 Descripción
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Este proyecto cuenta:
 
-## Project setup
+- ✅ Crear y gestionar usuarios.
+- ✅ Registrar tarjetas de crédito (con datos ficticios).
+- ✅ Crear pagos asociados a un usuario y una tarjeta.
+- ✅ Listar el historial de pagos de un usuario.
+- ✅ Autenticación mediante **JWT**.
+- ✅ Integración con un **microservicio en FastAPI** que simula la autorización de pagos (80% aprobado, 20% rechazado).
 
-```bash
-$ npm install
-```
+Cada vez que se crea un pago, la API en NestJS consume el servicio externo en Python para validar si el pago se aprueba o rechaza.
+
+---
+
+## 🧩 Tecnologías utilizadas
+
+- **Backend principal**: [NestJS](https://nestjs.com/) (Node.js + TypeScript)
+- **Base de datos**: PostgreSQL
+- **Microservicio de pagos**: FastAPI (Python)
+- **Autenticación**: JWT (JSON Web Tokens)
+- **ORM**: TypeORM
+- **Pruebas**: Colección de Postman incluida
+
+---
+
+## 🗂️ Estructura del proyecto
+
+Api_pago
+.
+├── .env
+├── .gitignore
+├── nest-cli.json
+├── package.json
+├── tsconfig.build.json
+├── tsconfig.json
+├── README.md
+├── src/
+│ ├── main.ts
+│ ├── app.module.ts
+│ │
+│ ├── common/
+│ │ ├── dto/
+│ │ │ └── pagination.dto.ts
+│ │ └── entities/
+│ │ ├── user.entity.ts
+│ │ ├── card.entity.ts
+│ │ └── payment.entity.ts
+│ │
+│ ├── config/
+│ │ ├── envs.ts
+│ │ └── index.ts
+│ │
+│ └── modules/
+│ ├── auth/
+│ │ ├── auth.controller.ts
+│ │ ├── auth.service.ts
+│ │ ├── auth.module.ts
+│ │ └── dto/
+│ │ ├── login.dto.ts
+│ │
+│ │
+│ ├── user/
+│ │ ├── user.controller.ts
+│ │ ├── user.service.ts
+│ │ ├── user.module.ts
+│ │ └── dto/
+│ │ └── create-user.dto.ts
+│ │
+│ ├── card/
+│ │ ├── card.controller.ts
+│ │ ├── card.service.ts
+│ │ ├── card.module.ts
+│ │ └── dto/
+│ │ └── create-card.dto.ts
+│ │
+│ └── payment/
+│ ├── payment.controller.ts
+│ ├── payment.service.ts
+│ ├── payment.module.ts
+│ └── dto/
+│ └── create-payment.dto.ts
+│
+└── test (no implementado)
+Apro_pago
+.
+│
+└──main.py
+│
+└──requirements.txt
+
+---
+
+## ⚙️ Requisitos previos
+
+- Node.js ≥ 20.x
+- npm o yarn
+- Python ≥ 3.12
+- pip
+- PostgreSQL ≥ 16
+
+---
+
+## 🚀 Instalación y ejecución
+
+### 1. Base de datos (PostgreSQL)
+
+Crea una base de datos llamada `pagos_db`:
+
+````bash
+createdb pagos_db;
+
+# Base de datos
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=tu_usuario_de_postgres
+DB_PASSWORD=tu_contraseña
+DB_NAME=pagos_db
+
+# JWT
+JWT_SECRET=mi_secreto_jwt_para_pagos_2025!
+JWT_EXPIRES_IN=3600
+
+# Microservicio de pagos
+PAYMENT_SERVICE_URL=http://localhost:8000/process-payment
 
 ## Compile and run the project
 
 ```bash
-# development
-$ npm run start
+##Api_pago(Api Nestjs)
+#Instalar las dependencias y iniciar el servidor
+cd Api_pago
+npm install
+npm run start:dev
 
-# watch mode
-$ npm run start:dev
+##Apro_pago(Microservicio en fastapi)
+#Instalar las dependencias y iniciar el servidor
+cd Apro_pago
+python -m venv venv
+source venv/bin/activate      # Linux/macOS
+# o
+venv\Scripts\activate         # Windows
 
-# production mode
-$ npm run start:prod
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+````
+
+## 🔐 Autenticación
+
+El acceso a los endpoints protegidos (`/user`,`/cards`, `/payments`, etc.) requiere un **token JWT**. Este token se obtiene **tras registrarse y luego iniciar sesión**:
+
+1. **Registrar un usuario** mediante el endpoint de registro:
+
+   ```http
+   POST /auth/register
+   Content-Type: application/json
+
+   {
+     "nombre": "Ana López",
+     "email": "ana@example.com",
+     "password": "Clave123"
+   }
+
+   POST /auth/login
+   Content-Type: application/json
+
+   {
+     "email": "ana@example.com",
+     "password": "Clave123"
+   }
+   ```
+
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

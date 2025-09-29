@@ -12,7 +12,8 @@ import { Payment } from '../../common/entities/payment.entity';
 import { User } from '../../common/entities/user.entity';
 import { Card } from '../../common/entities/card.entity';
 import { CreatePaymentDto } from './dto/createpayment.dto';
-import { PaginationDTO } from '../../common/dto/pagination.dto'; // 👈
+import { PaginationDTO } from '../../common/dto/pagination.dto';
+import { envs } from 'src/config';
 
 @Injectable()
 export class PaymentService {
@@ -40,9 +41,17 @@ export class PaymentService {
     let approved = false;
     try {
       const res = await firstValueFrom(
-        this.httpService.post('http://localhost:8000/process-payment', {
-          amount: dto.amount,
-        })
+        this.httpService.post(
+          envs.db.payment_service_url ??
+            (() => {
+              throw new InternalServerErrorException(
+                'payment_service_url no está definido en la configuración'
+              );
+            })(),
+          {
+            amount: dto.amount,
+          }
+        )
       );
       approved = res.data.approved;
     } catch (e) {
