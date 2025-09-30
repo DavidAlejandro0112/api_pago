@@ -30,10 +30,6 @@ Cada vez que se crea un pago, la API en NestJS consume el servicio externo en Py
 
 ---
 
-## 🗂️ Estructura del proyecto
-
----
-
 ## ⚙️ Requisitos previos
 
 - Node.js ≥ 20.x
@@ -62,14 +58,14 @@ DB_NAME=pagos_db
 
 # JWT
 JWT_SECRET=mi_secreto_jwt_para_pagos_2025!
-JWT_EXPIRES_IN=3600
+JWT_EXPIRES_IN=1h
 
 # Microservicio de pagos
 PAYMENT_SERVICE_URL=http://localhost:8000/process-payment
 
-## Compile and run the project
-
 ```bash
+
+
 ##Api_pago(Api Nestjs)
 #Instalar las dependencias y iniciar el servidor
 cd Api_pago
