@@ -1,6 +1,5 @@
 # Sistema de Pagos – Prueba Técnica Backend
 
-![NestJS](https://nestjs.com/img/logo-small.svg)
 API RESTful desarrollada en **NestJS (Node.js + TypeScript)** para gestionar un sistema básico de pagos, con autenticación JWT, base de datos **PostgreSQL** y un microservicio de procesamiento de pagos en **Python (FastAPI)**.
 
 ---
@@ -32,69 +31,6 @@ Cada vez que se crea un pago, la API en NestJS consume el servicio externo en Py
 ---
 
 ## 🗂️ Estructura del proyecto
-
-Api_pago
-.
-├── .env
-├── .gitignore
-├── nest-cli.json
-├── package.json
-├── tsconfig.build.json
-├── tsconfig.json
-├── README.md
-├── src/
-│ ├── main.ts
-│ ├── app.module.ts
-│ │
-│ ├── common/
-│ │ ├── dto/
-│ │ │ └── pagination.dto.ts
-│ │ └── entities/
-│ │ ├── user.entity.ts
-│ │ ├── card.entity.ts
-│ │ └── payment.entity.ts
-│ │
-│ ├── config/
-│ │ ├── envs.ts
-│ │ └── index.ts
-│ │
-│ └── modules/
-│ ├── auth/
-│ │ ├── auth.controller.ts
-│ │ ├── auth.service.ts
-│ │ ├── auth.module.ts
-│ │ └── dto/
-│ │ ├── login.dto.ts
-│ │
-│ │
-│ ├── user/
-│ │ ├── user.controller.ts
-│ │ ├── user.service.ts
-│ │ ├── user.module.ts
-│ │ └── dto/
-│ │ └── create-user.dto.ts
-│ │
-│ ├── card/
-│ │ ├── card.controller.ts
-│ │ ├── card.service.ts
-│ │ ├── card.module.ts
-│ │ └── dto/
-│ │ └── create-card.dto.ts
-│ │
-│ └── payment/
-│ ├── payment.controller.ts
-│ ├── payment.service.ts
-│ ├── payment.module.ts
-│ └── dto/
-│ └── create-payment.dto.ts
-│
-└── test (no implementado)
-Apro_pago
-.
-│
-└──main.py
-│
-└──requirements.txt
 
 ---
 

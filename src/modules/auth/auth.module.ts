@@ -1,3 +1,4 @@
+// auth.module.ts
 import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -12,12 +13,12 @@ import { envs } from 'src/config';
     forwardRef(() => UserModule),
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'pagos-secret-key',
-      signOptions: { expiresIn: envs.db.jwt_expires_in || '3600s' },
+      secret: envs.jwt.secret,
+      signOptions: { expiresIn: envs.jwt.expires_in },
     }),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  exports: [AuthService, JwtStrategy, PassportModule],
 })
 export class AuthModule {}

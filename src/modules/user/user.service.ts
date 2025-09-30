@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ConflictException,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,6 +11,9 @@ import { User } from '../../common/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PaginationDTO } from '../../common/dto/pagination.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UserService {
@@ -100,5 +104,67 @@ export class UserService {
       name: user.name,
       email: user.email,
     };
+  }
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto
+  ): Promise<UserResponseDto> {
+    try {
+      const user = await this.userRepository.findOneBy({ id });
+      if (!user) {
+        throw new NotFoundException(`Usuario con ID "${id}" no encontrado.`);
+      }
+
+      Object.assign(user, updateUserDto);
+
+      const updatedUser = await this.userRepository.save(user);
+      return this.mapToUserResponseDto(updatedUser);
+    } catch (error) {
+      console.error('Error al actualizar usuario:', error);
+      throw new InternalServerErrorException(
+        'No se pudo actualizar el usuario. Inténtelo más tarde.'
+      );
+    }
+  }
+  async changePassword(
+    id: string,
+    changePasswordDto: ChangePasswordDto
+  ): Promise<void> {
+    const { currentPassword, newPassword } = changePasswordDto;
+
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID "${id}" no encontrado.`);
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw new BadRequestException('La contraseña actual es incorrecta.');
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.userRepository.update(id, { password: hashedNewPassword });
+  }
+
+  async remove(id: string): Promise<{ message: string }> {
+    try {
+      const user = await this.userRepository.findOneBy({ id });
+      if (!user) {
+        throw new NotFoundException(`Usuario con ID "${id}" no encontrado.`);
+      }
+
+      await this.userRepository.remove(user);
+
+      return { message: `Usuario con ID "${id}" eliminado correctamente.` };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error('Error al eliminar usuario:', error);
+      throw new InternalServerErrorException(
+        'No se pudo eliminar el usuario. Inténtelo más tarde.'
+      );
+    }
   }
 }

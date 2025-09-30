@@ -6,9 +6,14 @@ import { User } from 'src/common/entities/user.entity';
 import { PaymentService } from './payment.service';
 import { HttpModule } from '@nestjs/axios';
 import { PaymentController } from './payment.controller';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [HttpModule, TypeOrmModule.forFeature([Payment, Card, User])],
+  imports: [
+    AuthModule,
+    HttpModule,
+    TypeOrmModule.forFeature([Payment, Card, User]),
+  ],
   providers: [PaymentService],
   controllers: [PaymentController],
   exports: [PaymentService],

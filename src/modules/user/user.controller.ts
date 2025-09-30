@@ -10,6 +10,8 @@ import {
   NotFoundException,
   BadRequestException,
   UseGuards,
+  Delete,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -28,6 +30,8 @@ import { User } from '../../common/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { PaginationDTO } from '../../common/dto/pagination.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -127,5 +131,27 @@ export class UserController {
     totalPages: number;
   }> {
     return await this.userService.findAll(pagination);
+  }
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(id, updateUserDto);
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id/change-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cambiar la contraseña del usuario' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiBody({ type: ChangePasswordDto })
+  async changePassword(
+    @Param('id') id: string,
+    @Body() changePasswordDto: ChangePasswordDto
+  ) {
+    await this.userService.changePassword(id, changePasswordDto);
+    return { message: 'Contraseña actualizada correctamente.' };
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return this.userService.remove(id);
   }
 }

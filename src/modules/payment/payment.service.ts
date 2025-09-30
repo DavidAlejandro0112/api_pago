@@ -42,7 +42,7 @@ export class PaymentService {
     try {
       const res = await firstValueFrom(
         this.httpService.post(
-          envs.db.payment_service_url ??
+          envs.paymentService.url ??
             (() => {
               throw new InternalServerErrorException(
                 'payment_service_url no está definido en la configuración'
