@@ -109,6 +109,11 @@ El acceso a los endpoints protegidos (`/user`,`/cards`, `/payments`, etc.) requi
    }
    ```
 
+   # Flujo de trabajo
+
+   Se crean los usuarios por el register
+   El login es por el email y la contraseña te genera un token es el que usas para la autorizacion de los demas endpoints
+
 ```
 
 ```
